@@ -8,47 +8,53 @@ addTodo.addEventListener('click', (e) => {
 
     let inputValue = input.value;
 
-    const todoItem = document.createElement('li');
-    todoItem.classList.add('todo-item');
+    if (inputValue !== '') {
 
-    const todo = document.createElement('span');
-    todo.innerHTML = inputValue;
-    todoItem.appendChild(todo);
+        const todoItem = document.createElement('li');
+        todoItem.classList.add('todo-item');
 
-    saveTodos(inputValue);
+        const todo = document.createElement('span');
+        todo.innerHTML = inputValue;
+        todo.style.marginLeft = '10px';
+        todoItem.appendChild(todo);
 
-    const buttonCheck = document.createElement('button');
-    buttonCheck.innerHTML = `<i class="fa fa-solid fa-check"></i>`;
-    todoItem.appendChild(buttonCheck);
+        saveLocalTodos(inputValue);
 
-    const buttonRemove = document.createElement('button');
-    buttonRemove.classList.add('remove-todo');
-    buttonRemove.innerHTML = `<i class="fa fa-solid fa-eraser"></i>`;
-    todoItem.appendChild(buttonRemove);
+        const buttonCheck = document.createElement('button');
+        buttonCheck.innerHTML = `<i class="fa fa-solid fa-check"></i>`;
+        todoItem.appendChild(buttonCheck);
 
-    buttonCheck.addEventListener('click', checkTodo);
-    buttonRemove.addEventListener('click', removeTodo);
-    
-    function checkTodo() {
-        todoItem.classList.add('checked');
-        todo.style.color = '#00A86B';
-        buttonCheck.style.color = '#00A86B';
+        const buttonRemove = document.createElement('button');
+        buttonRemove.classList.add('remove-todo');
+        buttonRemove.innerHTML = `<i class="fa fa-solid fa-eraser"></i>`;
+        todoItem.appendChild(buttonRemove);
+
+        buttonCheck.addEventListener('click', checkTodo);
+        buttonRemove.addEventListener('click', removeTodo);
+
+        function checkTodo() {
+            todoItem.classList.add('checked');
+            todo.style.color = '#00A86B';
+            buttonCheck.style.color = '#00A86B';
+        }
+
+        function removeTodo(e) {
+            removeLocalTodos(todo.innerHTML);
+            todoItem.remove();
+        }
+
+        todoList.appendChild(todoItem);
+
+        input.value = '';
     }
 
-    function removeTodo() {
-        todoItem.style.display = 'none';
-    }
-
-    todoList.appendChild(todoItem);
-
-    input.value = '';
 });
 
 
-function saveTodos(todo) {
+function saveLocalTodos(todo) {
     let todos;
 
-    if(localStorage.getItem('todos') === null) {
+    if (localStorage.getItem('todos') === null) {
         todos = [];
     } else {
         todos = JSON.parse(localStorage.getItem('todos'));
@@ -61,7 +67,7 @@ function saveTodos(todo) {
 function getTodos() {
     let todos;
 
-    if(localStorage.getItem('todos') === null) {
+    if (localStorage.getItem('todos') === null) {
         todos = [];
     } else {
         todos = JSON.parse(localStorage.getItem('todos'));
@@ -69,36 +75,51 @@ function getTodos() {
 
     todos.forEach((td) => {
         const todoItem = document.createElement('li');
-    todoItem.classList.add('todo-item');
+        todoItem.classList.add('todo-item');
 
-    const todo = document.createElement('span');
-    todo.innerHTML = td;
-    todoItem.appendChild(todo);
-    todo.style.marginLeft = '10px';
+        const todo = document.createElement('span');
+        todo.innerHTML = td;
+        todoItem.appendChild(todo);
+        todo.style.marginLeft = '10px';
 
-    const buttonCheck = document.createElement('button');
-    buttonCheck.innerHTML = `<i class="fa fa-solid fa-check"></i>`;
-    todoItem.appendChild(buttonCheck);
+        const buttonCheck = document.createElement('button');
+        buttonCheck.innerHTML = `<i class="fa fa-solid fa-check"></i>`;
+        todoItem.appendChild(buttonCheck);
 
-    const buttonRemove = document.createElement('button');
-    buttonRemove.classList.add('remove-todo');
-    buttonRemove.innerHTML = `<i class="fa fa-solid fa-eraser"></i>`;
-    todoItem.appendChild(buttonRemove);
+        const buttonRemove = document.createElement('button');
+        buttonRemove.classList.add('remove-todo');
+        buttonRemove.innerHTML = `<i class="fa fa-solid fa-eraser"></i>`;
+        todoItem.appendChild(buttonRemove);
 
-    buttonCheck.addEventListener('click', checkTodo);
-    buttonRemove.addEventListener('click', removeTodo);
-    
-    function checkTodo() {
-        todoItem.classList.add('checked');
-        todo.style.color = '#00A86B';
-        buttonCheck.style.color = '#00A86B';
-    }
+        buttonCheck.addEventListener('click', checkTodo);
+        buttonRemove.addEventListener('click', removeTodo);
 
-    function removeTodo() {
-        todoItem.style.display = 'none';
-    }
+        function checkTodo() {
+            todoItem.classList.add('checked');
+            todo.style.color = '#00A86B';
+            buttonCheck.style.color = '#00A86B';
+        }
 
-    todoList.appendChild(todoItem);
+        function removeTodo() {
+            removeLocalTodos(todo.innerHTML);
+            todoItem.remove();
+        }
+
+        todoList.appendChild(todoItem);
 
     })
+}
+
+function removeLocalTodos(td) {
+    let todos;
+
+    if (localStorage.getItem('todos') === null) {
+        todos = [];
+    } else {
+        todos = JSON.parse(localStorage.getItem('todos'));
+    }
+
+    todos.splice(todos.indexOf(td), 1);
+
+    localStorage.setItem('todos', JSON.stringify(todos));
 }
